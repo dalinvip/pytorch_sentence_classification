@@ -4,6 +4,10 @@
 # @Last Modify Time : 2018/1/14 22:45
 # @Contact : bamtercelboo@{gmail.com, 163.com}
 
+"""
+    FILE :  hyperparams.py
+    FUNCTION : set hyperparams for load Data、model、train
+"""
 import torch
 import random
 # random seed num
@@ -11,23 +15,21 @@ seed_num = 233
 torch.manual_seed(seed_num)
 random.seed(seed_num)
 
-"""
-    set hyperparams for load Data、model、train
-"""
-
 
 class Hyperparams():
     def __init__(self):
 
         # Data path
-        self.train_path = "./pos_test_data/train.ctb60.pos.hwc"
-        self.dev_path = "./pos_test_data/dev.ctb60.pos.hwc"
-        self.test_path = "./pos_test_data/test.ctb60.pos.hwc"
+        self.train_path = "./Data/MR/rt-polarity.all"
+        self.dev_path = None
+        self.test_path = None
         self.shuffle = True
         self.epochs_shuffle = True
 
         # model
         self.CNN = True
+        self.wide_conv = False
+        self.embed_dim = 100
         self.kernel_num = 200
         self.kernel_sizes = "1,2,3,4"
         self.dropout = 0.6
@@ -39,31 +41,28 @@ class Hyperparams():
         self.Adam = True
         self.learning_rate = 0.001
         self.learning_rate_decay = 1   # value is 1 means not change lr
+        # L2 weight_decay
+        self.weight_decay = 1e-8  # default value is zero in Adam SGD
+        # self.weight_decay = 0   # default value is zero in Adam SGD
         self.epochs = 150
-        self.batch_size = 16
+        self.train_batch_size = 16
+        self.dev_batch_size = None  # "None meaning not use batch for dev"
+        self.test_batch_size = None  # "None meaning not use batch for test"
         self.log_interval = 1
+        self.dev_interval = 100
         self.test_interval = 100
-        self.save_interval = 100
         self.save_dir = "snapshot"
+        # whether to delete the model after test acc so that to save space
+        self.rm_model = True
 
         # min freq to include during built the vocab, default is 1
         self.min_freq = 1
 
         # word_Embedding
-        self.word_Embedding = True
+        self.word_Embedding = False
         self.word_Embedding_Path = "./word2vec/glove.sentiment.conj.pretrained.txt"
 
         # GPU
         self.use_cuda = False
-        self.gpu_device = 0
+        self.gpu_device = -1  # -1 meaning use cuda
         self.num_threads = 1
-
-        self.snapshot = None
-        self.num_threads = 1
-
-        # L2 weight_decay
-        self.weight_decay = 1e-8   # default value is zero in Adam SGD
-        # self.weight_decay = 0   # default value is zero in Adam SGD
-
-        # whether to delete the model after test acc so that to save space
-        self.rm_model = True

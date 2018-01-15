@@ -1,0 +1,10 @@
+model snapshot\2018-01-15_10-32-35\snapshot_steps100.pt
+Evaluation - loss: 0.700557  acc: 50.3283%(1073/2132) 
+model_count 1 
+
+The Current Best Result is : 50.3283
+model snapshot\2018-01-15_10-32-35\snapshot_steps200.pt
+Evaluation - loss: 0.693227  acc: 51.5478%(1099/2132) 
+model_count 2 
+
+The Current Best Result is : 51.5478
