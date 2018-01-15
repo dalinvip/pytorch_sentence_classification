@@ -109,7 +109,6 @@ def show_params():
     file = open("Parameters.txt", "a", encoding="UTF-8")
     for attr, value in sorted(args.__dict__.items()):
         if attr.upper() != "PRETRAINED_WEIGHT":
-            print(value)
             print("\t{}={}".format(attr.upper(), value))
         file.write("\t{}={}\n".format(attr.upper(), value))
     file.close()
@@ -153,9 +152,9 @@ def main():
 
     # pretrained word embedding
     if args.word_Embedding:
-        pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
-                                                   text_field_words_dict=text_field.vocab.itos,
-                                                   pad=text_field.pad_token)
+        pretrain_embed = load_pretrained_emb_avg(path=args.word_Embedding_Path,
+                                                 text_field_words_dict=text_field.vocab.itos,
+                                                 pad=text_field.pad_token)
         args.pretrained_weight = pretrain_embed
 
     # print params

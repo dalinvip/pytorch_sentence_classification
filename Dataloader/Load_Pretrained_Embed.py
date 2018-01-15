@@ -12,6 +12,10 @@
 import torch
 from collections import OrderedDict
 import numpy as np
+import tqdm
+import hyperparams as hy
+torch.manual_seed(hy.seed_num)
+np.random.seed(hy.seed_num)
 
 
 def load_pretrained_emb_zeros(path, text_field_words_dict, pad=None, set_padding=False):
@@ -32,18 +36,22 @@ def load_pretrained_emb_zeros(path, text_field_words_dict, pad=None, set_padding
             else:
                 embedding_dim = len(line_split) - 1
                 break
+    f.close()
     word_count = len(text_field_words_dict)
     print('The number of wordsDict is {} \nThe dim of pretrained embedding is {}\n'.format(str(word_count),
                                                                                            str(embedding_dim)))
     embeddings = np.zeros((int(word_count), int(embedding_dim)))
     with open(path, encoding='utf-8') as f:
-        for line in f.readlines():
+        lines = f.readlines()
+        lines = tqdm.tqdm(lines)
+        for line in lines:
             values = line.split(' ')
             index = text_field_words_dict.get(values[0])  # digit or None
 
             if index:
                 vector = np.array(values[1:], dtype='float32')
                 embeddings[index] = vector
+    f.close()
 
     return torch.from_numpy(embeddings).float()
 
@@ -66,6 +74,7 @@ def load_pretrained_emb_avg(path, text_field_words_dict, pad=None, set_padding=F
             else:
                 embedding_dim = len(line_split) - 1
                 break
+    f.close()
     word_count = len(text_field_words_dict)
     print('The number of wordsDict is {} \nThe dim of pretrained embedding is {}\n'.format(str(word_count),
                                                                                            str(embedding_dim)))
@@ -73,13 +82,19 @@ def load_pretrained_emb_avg(path, text_field_words_dict, pad=None, set_padding=F
 
     inword_list = []
     with open(path, encoding='utf-8') as f:
-        for line in f.readlines():
-            values = line.split(' ')
+        lines = f.readlines()
+        lines = tqdm.tqdm(lines)
+        for line in lines:
+            lines.set_description("Processing")
+            values = line.strip().split(" ")
+            if len(values) == 1 or len(values) == 2:
+                continue
             index = text_field_words_dict.get(values[0])  # digit or None
             if index:
-                vector = np.array(values[1:], dtype='float32')
+                vector = np.array([float(i) for i in values[1:]], dtype='float32')
                 embeddings[index] = vector
                 inword_list.append(index)
+    f.close()
 
     sum_col = np.sum(embeddings, axis=0) / len(inword_list)     # avg
     for i in range(len(text_field_words_dict)):
