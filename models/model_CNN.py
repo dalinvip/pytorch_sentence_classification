@@ -38,10 +38,7 @@ class CNN_Text(nn.Module):
         self.embed = nn.Embedding(V, D)
 
         if args.word_Embedding:
-            pretrained_weight = np.array(args.pretrained_weight)
-            self.embed.weight.data.copy_(torch.from_numpy(pretrained_weight))
-            # fixed the word embedding
-            self.embed.weight.requires_grad = True
+            self.embed.weight.data.copy_(args.pretrained_weight)
 
         if args.wide_conv is True:
             print("using wide convolution")
@@ -51,6 +48,10 @@ class CNN_Text(nn.Module):
             print("using narrow convolution")
             self.convs1 = [nn.Conv2d(in_channels=Ci, out_channels=Co, kernel_size=(K, D), bias=True) for K in Ks]
         print(self.convs1)
+
+        if args.use_cuda is True:
+            for conv in self.convs1:
+                conv.cuda()
 
         self.dropout = nn.Dropout(args.dropout)
         self.dropout_embed = nn.Dropout(args.dropout_embed)

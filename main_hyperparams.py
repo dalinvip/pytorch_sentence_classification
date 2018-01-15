@@ -17,7 +17,7 @@ import datetime
 import torch
 import torchtext.data as data
 from Dataloader.Data_Loader import *
-from Dataloader.Load_Pretrained_Embedding import Word_Embedding
+from Dataloader.Load_Pretrained_Embed import *
 import train_ALL_CNN
 from models import model_CNN
 import shutil
@@ -106,14 +106,16 @@ def show_params():
     print("\nParameters:")
     if os.path.exists("./Parameters.txt"):
         os.remove("./Parameters.txt")
-    file = open("Parameters.txt", "a")
+    file = open("Parameters.txt", "a", encoding="UTF-8")
     for attr, value in sorted(args.__dict__.items()):
-        if attr.upper() != "PRETRAINED_WEIGHT" and attr.upper() != "pretrained_weight_static".upper():
+        if attr.upper() != "PRETRAINED_WEIGHT":
+            print(value)
             print("\t{}={}".format(attr.upper(), value))
         file.write("\t{}={}\n".format(attr.upper(), value))
     file.close()
     shutil.copy("./Parameters.txt", args.save_dir)
     shutil.copy("./hyperparams.py", args.save_dir)
+
 
 def cal_result():
     resultlist = []
@@ -129,6 +131,7 @@ def cal_result():
         file.write("\n")
         file.close()
     shutil.copy("./Test_Result.txt", str(args.save_dir) + "/Test_Result.txt")
+
 
 def main():
     args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
@@ -147,6 +150,14 @@ def main():
     args.embed_num = len(text_field.vocab)
     args.class_num = len(label_field.vocab) - 1
     print("embed_num : {}, class_num : {}".format(args.embed_num, args.class_num))
+
+    # pretrained word embedding
+    if args.word_Embedding:
+        pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
+                                                   text_field_words_dict=text_field.vocab.itos,
+                                                   pad=text_field.pad_token)
+        args.pretrained_weight = pretrain_embed
+
     # print params
     show_params()
 

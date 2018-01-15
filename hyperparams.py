@@ -29,7 +29,7 @@ class Hyperparams():
         # model
         self.CNN = True
         self.wide_conv = False
-        self.embed_dim = 100
+        self.embed_dim = 300
         self.kernel_num = 200
         self.kernel_sizes = "1,2,3,4"
         self.dropout = 0.6
@@ -59,8 +59,8 @@ class Hyperparams():
         self.min_freq = 1
 
         # word_Embedding
-        self.word_Embedding = False
-        self.word_Embedding_Path = "./word2vec/glove.sentiment.conj.pretrained.txt"
+        self.word_Embedding = True
+        self.word_Embedding_Path = "./Pretrain_Embedding/converted_word_MR.txt"
 
         # GPU
         self.use_cuda = False
