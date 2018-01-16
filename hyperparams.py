@@ -20,7 +20,9 @@ class Hyperparams():
     def __init__(self):
 
         # Data path
-        self.train_path = "./Data/MR/rt-polarity.all"
+        # self.train_path = "./Data/MR/rt-polarity.all"
+        self.train_path = "./Data/CR/custrev.all"
+        # self.train_path = "./Data/Subj/subj.all"
         self.dev_path = None
         self.test_path = None
         self.shuffle = True
@@ -29,13 +31,13 @@ class Hyperparams():
         # model
         self.CNN = True
         self.wide_conv = False
-        self.embed_dim = 300
-        self.kernel_num = 200
-        self.kernel_sizes = "1,2,3,4"
-        self.dropout = 0.6
-        self.dropout_embed = 0.6
+        self.embed_dim = 100
+        self.kernel_num = 100
+        self.kernel_sizes = "3,4,5"
+        self.dropout = 0.5
+        self.dropout_embed = 0.5
         self.max_norm = None
-        self.clip_max_norm = 5
+        self.clip_max_norm = 10
 
         # select optim algorhtim for train
         self.Adam = True
@@ -60,9 +62,11 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        self.word_Embedding_Path = "./Pretrain_Embedding/converted_word_MR.txt"
+        # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source"
+        self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
+        # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 
         # GPU
-        self.use_cuda = False
+        self.use_cuda = True
         self.gpu_device = -1  # -1 meaning use cuda
         self.num_threads = 1

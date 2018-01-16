@@ -87,6 +87,7 @@ def load_data(text_field, label_field, path_file, **kargs):
     print("len(train_data) {} ".format(len(train_data)))
     print("len(dev_data) {} ".format(len(dev_data)))
     print("len(test_data) {} ".format(len(test_data)))
+    # print("all word")
     text_field.build_vocab(train_data.text, min_freq=args.min_freq)
     label_field.build_vocab(train_data.label)
     train_iter, dev_iter, test_iter = create_Iterator(train_data, dev_data, test_data, batch_size=args.batch_size,
@@ -133,6 +134,9 @@ def cal_result():
 
 
 def main():
+    if args.use_cuda is True:
+        # use deterministic algorithm for cnn
+        torch.backends.cudnn.deterministic = True 
     args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
     # save file
     mulu = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

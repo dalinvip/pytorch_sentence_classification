@@ -39,6 +39,7 @@ class CNN_Text(nn.Module):
 
         if args.word_Embedding:
             self.embed.weight.data.copy_(args.pretrained_weight)
+            self.embed.weight.requires_grad = False
 
         if args.wide_conv is True:
             print("using wide convolution")
