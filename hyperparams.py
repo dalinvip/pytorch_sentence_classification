@@ -21,8 +21,8 @@ class Hyperparams():
 
         # Data path
         # self.train_path = "./Data/MR/rt-polarity.all"
-        self.train_path = "./Data/CR/custrev.all"
-        # self.train_path = "./Data/Subj/subj.all"
+        # self.train_path = "./Data/CR/custrev.all"
+        self.train_path = "./Data/Subj/subj.all"
         self.dev_path = None
         self.test_path = None
         self.shuffle = True
@@ -62,8 +62,8 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source"
-        self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
+        self.word_Embedding_Path = "./Pretrain_Embedding/enwiki.emb.source_feat_Subj.txt"
+        # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 
         # GPU

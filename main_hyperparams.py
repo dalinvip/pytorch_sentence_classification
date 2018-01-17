@@ -20,6 +20,7 @@ from Dataloader.Data_Loader import *
 from Dataloader.Load_Pretrained_Embed import *
 import train_ALL_CNN
 from models import model_CNN
+from models import model_SumPooling
 import shutil
 import random
 import hyperparams as hy
@@ -167,7 +168,8 @@ def main():
     # load model and start train
     if args.CNN is True:
         print("loading CNN model.....")
-        model = model_CNN.CNN_Text(args)
+        # model = model_CNN.CNN_Text(args)
+        model = model_SumPooling.SumPooling(args)
         shutil.copy("./models/model_CNN.py", args.save_dir)
         print(model)
         if args.use_cuda is True:

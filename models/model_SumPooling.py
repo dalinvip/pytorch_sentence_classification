@@ -16,8 +16,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
+from torch.autograd import Variable as Variable
 import random
 import torch.nn.init as init
+import numpy as np
 import hyperparams
 torch.manual_seed(hyperparams.seed_num)
 random.seed(hyperparams.seed_num)
@@ -32,8 +34,6 @@ class SumPooling(nn.Module):
         V = args.embed_num
         D = args.embed_dim
         C = args.class_num
-        Co = args.kernel_num
-        Ks = args.kernel_sizes
 
         self.embed = nn.Embedding(V, D)
 
@@ -41,16 +41,21 @@ class SumPooling(nn.Module):
             self.embed.weight.data.copy_(args.pretrained_weight)
             self.embed.weight.require_grads = False
 
-        self.dropout = nn.Dropout(args.dropout)
-        self.dropout_embed = nn.Dropout(args.dropout_embed)
-        in_fea = len(Ks) * Co
-        self.fc = nn.Linear(in_features=in_fea, out_features=C, bias=True)
+        self.linear = nn.Linear(in_features=D, out_features=C, bias=True)
+
+    def sum_pooling(self, embed):
+        assert embed.dim() == 3
+        assert isinstance(embed, Variable)
+        embed_sum = torch.sum(embed, 2)
+        # print(embed_sum)
+        return embed_sum
 
     def forward(self, x):
         x = self.embed(x)  # (N,W,D)
-        x = self.dropout_embed(x)
+        x = x.permute(0, 2, 1)
+        # print(x.size())
+        x = self.sum_pooling(x)
+        logit = self.linear(x)
+        return logit
 
-        return ""
 
-    def sum_pooling(self, embed):
-        return ""
