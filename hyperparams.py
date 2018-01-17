@@ -20,9 +20,9 @@ class Hyperparams():
     def __init__(self):
 
         # Data path
-        # self.train_path = "./Data/MR/rt-polarity.all"
+        self.train_path = "./Data/MR/rt-polarity.all"
         # self.train_path = "./Data/CR/custrev.all"
-        self.train_path = "./Data/Subj/subj.all"
+        # self.train_path = "./Data/Subj/subj.all"
         self.dev_path = None
         self.test_path = None
         self.shuffle = True
@@ -31,7 +31,7 @@ class Hyperparams():
         # model
         self.CNN = True
         self.wide_conv = False
-        self.embed_dim = 100
+        self.embed_dim = 300
         self.kernel_num = 100
         self.kernel_sizes = "3,4,5"
         self.dropout = 0.5
@@ -46,7 +46,7 @@ class Hyperparams():
         # L2 weight_decay
         self.weight_decay = 1e-8  # default value is zero in Adam SGD
         # self.weight_decay = 0   # default value is zero in Adam SGD
-        self.epochs = 150
+        self.epochs = 40
         self.train_batch_size = 16
         self.dev_batch_size = None  # "None meaning not use batch for dev"
         self.test_batch_size = None  # "None meaning not use batch for test"
@@ -62,11 +62,11 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        self.word_Embedding_Path = "./Pretrain_Embedding/enwiki.emb.source_feat_Subj.txt"
+        self.word_Embedding_Path = "./Pretrain_Embedding/converted_word_MR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 
         # GPU
-        self.use_cuda = True
+        self.use_cuda = False
         self.gpu_device = -1  # -1 meaning use cuda
         self.num_threads = 1

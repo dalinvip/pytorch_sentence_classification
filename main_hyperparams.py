@@ -82,6 +82,8 @@ parser.add_argument("-num_threads", type=int, default=hyperparams.num_threads, h
 # option
 args = parser.parse_args()
 
+assert args.test_interval == args.dev_interval
+
 
 def load_data(text_field, label_field, path_file, **kargs):
     train_data, dev_data, test_data = Data.splits(path_file, text_field, label_field, shuffle=args.shuffle)

@@ -31,6 +31,7 @@ def train(train_iter, dev_iter, test_iter, model, args):
     steps = 0
     model_count = 0
     model.train()
+    max_dev_acc = -1
     for epoch in range(1, args.epochs+1):
         print("\n## 第{} 轮迭代，共计迭代 {} 次 ！##\n".format(epoch, args.epochs))
         print("now lr is {} \n".format(optimizer.param_groups[0].get("lr")))
@@ -59,8 +60,12 @@ def train(train_iter, dev_iter, test_iter, model, args):
                                                                              accuracy,
                                                                              corrects,
                                                                              batch.batch_size))
+
             if steps % args.dev_interval == 0:
-                eval(dev_iter, model, args)
+                model_count += 1
+                dev_accuracy = eval(dev_iter, model, model_count, args)
+                if dev_accuracy > max_dev_acc:
+                    max_dev_acc = dev_accuracy
             if steps % args.test_interval == 0:
                 if not os.path.isdir(args.save_dir):
                     os.makedirs(args.save_dir)
@@ -69,12 +74,12 @@ def train(train_iter, dev_iter, test_iter, model, args):
                 torch.save(model, save_path)
                 print(save_path, end=" ")
                 test_model = torch.load(save_path)
-                model_count += 1
-                test_eval(test_iter, test_model, save_path, args, model_count)
+                # model_count += 1
+                test_eval(test_iter, test_model, save_path, args, model_count, max_dev_acc)
     return model_count
 
 
-def eval(data_iter, model, args):
+def eval(data_iter, model, model_count, args):
     model.eval()
     corrects, avg_loss = 0, 0
     for batch in data_iter:
@@ -97,9 +102,16 @@ def eval(data_iter, model, args):
                                                                        accuracy,
                                                                        corrects,
                                                                        size))
+    if os.path.exists("./Test_Result.txt"):
+        file = open("./Test_Result.txt", "a")
+    else:
+        file = open("./Test_Result.txt", "w")
+    file.write("Dev_Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{}) --- modelCount: {} \n".format(avg_loss, accuracy,
+                                                                                                corrects, size, model_count))
+    return round(accuracy, 4)
 
 
-def test_eval(data_iter, model, save_path, args, model_count):
+def test_eval(data_iter, model, save_path, args, model_count, max_dev_acc):
     model.eval()
     corrects, avg_loss = 0, 0
     for batch in data_iter:
@@ -137,14 +149,21 @@ def test_eval(data_iter, model, save_path, args, model_count):
     resultlist = []
     if os.path.exists("./Test_Result.txt"):
         file = open("./Test_Result.txt")
+        modelCount = -1
+        test_result = -1
         for line in file.readlines():
+            if line[:14] == "Dev_Evaluation" and float(line[(line.find("acc") + 5):line.find("%")]) == max_dev_acc:
+                modelCount = int(line[(line.find("modelCount") + 12):-1])
             if line[:10] == "Evaluation":
                 resultlist.append(float(line[34:41]))
+                if modelCount != -1:
+                    test_result = resultlist[modelCount - 1]
         result = sorted(resultlist)
         file.close()
         file = open("./Test_Result.txt", "a")
-        file.write("\nThe Current Best Result is : " + str(result[len(result) - 1]))
-        file.write("\n")
+        file.write("\nThe Current Best Test Result is : " + str(result[len(result) - 1]))
+        file.write("\nThe Current Best Dev Result is {}, For Test Result is {}: ".format(max_dev_acc, test_result))
+        file.write("\n\n")
         file.close()
     shutil.copy("./Test_Result.txt", "./snapshot/" + args.mulu + "/Test_Result.txt")
     # whether to delete the model after test acc so that to save space

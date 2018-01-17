@@ -1,10 +1,153 @@
-model snapshot\2018-01-15_10-32-35\snapshot_steps100.pt
-Evaluation - loss: 0.700557  acc: 50.3283%(1073/2132) 
+Dev_Evaluation - loss: 0.608429  acc: 65.7598%(701/1066) --- modelCount: 1 
+model snapshot\2018-01-17_23-35-12\snapshot_steps100.pt
+Evaluation - loss: 0.623037  acc: 67.3546%(1436/2132) 
 model_count 1 
 
-The Current Best Result is : 50.3283
-model snapshot\2018-01-15_10-32-35\snapshot_steps200.pt
-Evaluation - loss: 0.693227  acc: 51.5478%(1099/2132) 
+The Current Best Test Result is : 67.3546
+The Current Best Dev Result is 65.7598, For Test Result is 67.3546: 
+
+Dev_Evaluation - loss: 0.490245  acc: 75.9850%(810/1066) --- modelCount: 2 
+model snapshot\2018-01-17_23-35-12\snapshot_steps200.pt
+Evaluation - loss: 0.494782  acc: 77.0169%(1642/2132) 
 model_count 2 
 
-The Current Best Result is : 51.5478
+The Current Best Test Result is : 77.0169
+The Current Best Dev Result is 75.985, For Test Result is 77.0169: 
+
+Dev_Evaluation - loss: 0.473276  acc: 77.0169%(821/1066) --- modelCount: 3 
+model snapshot\2018-01-17_23-35-12\snapshot_steps300.pt
+Evaluation - loss: 0.475453  acc: 77.7205%(1657/2132) 
+model_count 3 
+
+The Current Best Test Result is : 77.7205
+The Current Best Dev Result is 77.0169, For Test Result is 77.7205: 
+
+Dev_Evaluation - loss: 0.469026  acc: 78.7054%(839/1066) --- modelCount: 4 
+model snapshot\2018-01-17_23-35-12\snapshot_steps400.pt
+Evaluation - loss: 0.463936  acc: 79.1745%(1688/2132) 
+model_count 4 
+
+The Current Best Test Result is : 79.1745
+The Current Best Dev Result is 78.7054, For Test Result is 79.1745: 
+
+Dev_Evaluation - loss: 0.504484  acc: 77.5797%(827/1066) --- modelCount: 5 
+model snapshot\2018-01-17_23-35-12\snapshot_steps500.pt
+Evaluation - loss: 0.504761  acc: 76.2664%(1626/2132) 
+model_count 5 
+
+The Current Best Test Result is : 79.1745
+The Current Best Dev Result is 78.7054, For Test Result is 79.1745: 
+
+Dev_Evaluation - loss: 0.474395  acc: 77.7674%(829/1066) --- modelCount: 6 
+model snapshot\2018-01-17_23-35-12\snapshot_steps600.pt
+Evaluation - loss: 0.465225  acc: 79.3152%(1691/2132) 
+model_count 6 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 78.7054, For Test Result is 79.1745: 
+
+Dev_Evaluation - loss: 0.609239  acc: 72.9831%(778/1066) --- modelCount: 7 
+model snapshot\2018-01-17_23-35-12\snapshot_steps700.pt
+Evaluation - loss: 0.619310  acc: 72.4203%(1544/2132) 
+model_count 7 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 78.7054, For Test Result is 79.1745: 
+
+Dev_Evaluation - loss: 0.570388  acc: 74.9531%(799/1066) --- modelCount: 8 
+model snapshot\2018-01-17_23-35-12\snapshot_steps800.pt
+Evaluation - loss: 0.580628  acc: 74.3902%(1586/2132) 
+model_count 8 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 78.7054, For Test Result is 79.1745: 
+
+Dev_Evaluation - loss: 0.491683  acc: 79.0807%(843/1066) --- modelCount: 9 
+model snapshot\2018-01-17_23-35-12\snapshot_steps900.pt
+Evaluation - loss: 0.496153  acc: 78.6585%(1677/2132) 
+model_count 9 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.547547  acc: 78.9869%(842/1066) --- modelCount: 10 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1000.pt
+Evaluation - loss: 0.559136  acc: 78.7054%(1678/2132) 
+model_count 10 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.530577  acc: 78.5178%(837/1066) --- modelCount: 11 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1100.pt
+Evaluation - loss: 0.523802  acc: 79.2214%(1689/2132) 
+model_count 11 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.550198  acc: 78.4240%(836/1066) --- modelCount: 12 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1200.pt
+Evaluation - loss: 0.549642  acc: 78.6585%(1677/2132) 
+model_count 12 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.639256  acc: 75.6098%(806/1066) --- modelCount: 13 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1300.pt
+Evaluation - loss: 0.639285  acc: 75.7974%(1616/2132) 
+model_count 13 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.645412  acc: 76.7355%(818/1066) --- modelCount: 14 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1400.pt
+Evaluation - loss: 0.638061  acc: 76.1726%(1624/2132) 
+model_count 14 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.638049  acc: 77.8612%(830/1066) --- modelCount: 15 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1500.pt
+Evaluation - loss: 0.635322  acc: 78.1426%(1666/2132) 
+model_count 15 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.654355  acc: 77.6735%(828/1066) --- modelCount: 16 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1600.pt
+Evaluation - loss: 0.654516  acc: 78.1895%(1667/2132) 
+model_count 16 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.698270  acc: 77.0169%(821/1066) --- modelCount: 17 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1700.pt
+Evaluation - loss: 0.701008  acc: 77.5328%(1653/2132) 
+model_count 17 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.721609  acc: 75.8912%(809/1066) --- modelCount: 18 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1800.pt
+Evaluation - loss: 0.723383  acc: 76.5478%(1632/2132) 
+model_count 18 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.718311  acc: 78.2364%(834/1066) --- modelCount: 19 
+model snapshot\2018-01-17_23-35-12\snapshot_steps1900.pt
+Evaluation - loss: 0.703726  acc: 78.3771%(1671/2132) 
+model_count 19 
+
+The Current Best Test Result is : 79.3152
+The Current Best Dev Result is 79.0807, For Test Result is 78.6585: 
+
+Dev_Evaluation - loss: 0.770041  acc: 76.9231%(820/1066) --- modelCount: 20 
