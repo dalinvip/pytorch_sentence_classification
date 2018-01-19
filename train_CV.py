@@ -20,7 +20,7 @@ torch.manual_seed(hyperparams.seed_num)
 random.seed(hyperparams.seed_num)
 
 
-def train(train_iter, dev_iter, test_iter, model, args):
+def train(train_iter, test_iter, model, args):
     if args.use_cuda:
         model.cuda()
 
@@ -68,21 +68,22 @@ def train(train_iter, dev_iter, test_iter, model, args):
                                                                              corrects,
                                                                              batch.batch_size))
 
-            if steps % args.dev_interval == 0:
-                model_count += 1
-                dev_accuracy = eval(dev_iter, model, model_count, args)
-                if dev_accuracy > max_dev_acc:
-                    max_dev_acc = dev_accuracy
+            # if steps % args.dev_interval == 0:
+
+            #     dev_accuracy = eval(dev_iter, model, model_count, args)
+            #     if dev_accuracy > max_dev_acc:
+            #         max_dev_acc = dev_accuracy
+            model_count += 1
             if steps % args.test_interval == 0:
                 if not os.path.isdir(args.save_dir):
                     os.makedirs(args.save_dir)
                 save_prefix = os.path.join(args.save_dir, 'snapshot')
                 save_path = '{}_steps{}.pt'.format(save_prefix, steps)
                 torch.save(model, save_path)
-                print(save_path, end=" ")
+                print("\n" + save_path, end=" ")
                 test_model = torch.load(save_path)
                 # model_count += 1
-                test_eval(test_iter, test_model, save_path, args, model_count, max_dev_acc)
+                test_eval(test_iter, test_model, save_path, args, model_count)
     return model_count
 
 
@@ -118,7 +119,7 @@ def eval(data_iter, model, model_count, args):
     return round(accuracy, 4)
 
 
-def test_eval(data_iter, model, save_path, args, model_count, max_dev_acc):
+def test_eval(data_iter, model, save_path, args, model_count):
     model.eval()
     corrects, avg_loss = 0, 0
     for batch in data_iter:
@@ -147,7 +148,7 @@ def test_eval(data_iter, model, save_path, args, model_count, max_dev_acc):
         file = open("./Test_Result.txt", "a")
     else:
         file = open("./Test_Result.txt", "w")
-    file.write("model " + save_path + "\n")
+    file.write("\nmodel " + save_path + "\n")
     file.write("Evaluation - loss: {:.6f}  acc: {:.4f}%({}/{}) \n".format(avg_loss, accuracy, corrects, size))
     file.write("model_count {} \n".format(model_count))
     # file.write("\n")
@@ -159,17 +160,17 @@ def test_eval(data_iter, model, save_path, args, model_count, max_dev_acc):
         modelCount = -1
         test_result = -1
         for line in file.readlines():
-            if line[:14] == "Dev_Evaluation" and float(line[(line.find("acc") + 5):line.find("%")]) == max_dev_acc:
-                modelCount = int(line[(line.find("modelCount") + 12):-1])
+            # if line[:14] == "Dev_Evaluation" and float(line[(line.find("acc") + 5):line.find("%")]) == max_dev_acc:
+            #     modelCount = int(line[(line.find("modelCount") + 12):-1])
             if line[:10] == "Evaluation":
                 resultlist.append(float(line[34:41]))
-                if modelCount != -1:
-                    test_result = resultlist[modelCount - 1]
+                # if modelCount != -1:
+                #     test_result = resultlist[modelCount - 1]
         result = sorted(resultlist)
         file.close()
         file = open("./Test_Result.txt", "a")
         file.write("\nThe Current Best Test Result is : " + str(result[len(result) - 1]))
-        file.write("\nThe Current Best Dev Result is {}, For Test Result is {}: ".format(max_dev_acc, test_result))
+        # file.write("\nThe Current Best Dev Result is {}, For Test Result is {}: ".format(max_dev_acc, test_result))
         file.write("\n\n")
         file.close()
     shutil.copy("./Test_Result.txt", "./snapshot/" + args.mulu + "/Test_Result.txt")

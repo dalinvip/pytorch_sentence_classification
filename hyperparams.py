@@ -11,7 +11,7 @@
 import torch
 import random
 # random seed num
-seed_num = 0
+seed_num = 532
 torch.manual_seed(seed_num)
 random.seed(seed_num)
 
@@ -27,6 +27,7 @@ class Hyperparams():
         self.test_path = None
         self.shuffle = True
         self.epochs_shuffle = True
+        self.nfold = 10
 
         # model
         self.CNN = True
@@ -37,7 +38,7 @@ class Hyperparams():
         self.dropout = 0.5
         self.dropout_embed = 0.3
         self.max_norm = None
-        self.clip_max_norm = 10
+        self.clip_max_norm = 5
 
         # select optim algorhtim for train
         self.Adam = True
@@ -46,7 +47,7 @@ class Hyperparams():
         # L2 weight_decay
         self.weight_decay = 1e-8  # default value is zero in Adam SGD
         # self.weight_decay = 0   # default value is zero in Adam SGD
-        self.epochs = 1000
+        self.epochs = 200
         self.train_batch_size = 16
         self.dev_batch_size = None  # "None meaning not use batch for dev"
         self.test_batch_size = None  # "None meaning not use batch for test"
@@ -62,7 +63,7 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        self.word_Embedding_Path = "./Pretrain_Embedding/parallel/sentence_classification/enwiki.emb.feat_CR.txt"
+        self.word_Embedding_Path = "./Pretrain_Embedding/parallel/sentence_classification/enwiki.emb.source_feat_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 
