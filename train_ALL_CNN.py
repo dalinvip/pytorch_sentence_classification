@@ -26,7 +26,11 @@ def train(train_iter, dev_iter, test_iter, model, args):
 
     if args.Adam is True:
         print("Adam Training......")
-        optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+        # optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+        optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
+                                     weight_decay=args.weight_decay)
+        # optimizer = torch.optim.Adagrad(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
+        #                              weight_decay=args.weight_decay)
 
     steps = 0
     model_count = 0
@@ -45,8 +49,8 @@ def train(train_iter, dev_iter, test_iter, model, args):
             # print(target)
             loss = F.cross_entropy(logit, target)
             loss.backward()
-            if args.clip_max_norm is not None:
-                utils.clip_grad_norm(model.parameters(), max_norm=args.clip_max_norm)
+            # if args.clip_max_norm is not None:
+            #     utils.clip_grad_norm(model.parameters(), max_norm=args.clip_max_norm)
             optimizer.step()
             steps += 1
             if steps % args.log_interval == 0:

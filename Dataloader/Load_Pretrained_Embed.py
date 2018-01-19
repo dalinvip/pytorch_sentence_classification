@@ -41,17 +41,26 @@ def load_pretrained_emb_zeros(path, text_field_words_dict, pad=None, set_padding
     print('The number of wordsDict is {} \nThe dim of pretrained embedding is {}\n'.format(str(word_count),
                                                                                            str(embedding_dim)))
     embeddings = np.zeros((int(word_count), int(embedding_dim)))
+    iov_num = 0
+    oov_num = 0
     with open(path, encoding='utf-8') as f:
         lines = f.readlines()
-        lines = tqdm.tqdm(lines)
+        # lines = tqdm.tqdm(lines)
         for line in lines:
-            values = line.split(' ')
+            values = line.strip().split(' ')
+            if len(values) == 1 or len(values) == 2:
+                continue
             index = text_field_words_dict.get(values[0])  # digit or None
-
             if index:
-                vector = np.array(values[1:], dtype='float32')
+                # print(index)
+                iov_num += 1
+                vector = np.array([float(i) for i in values[1:]], dtype='float32')
                 embeddings[index] = vector
+            else:
+                oov_num += 1
     f.close()
+
+    print("\niov_num {} oov_num {} oov_radio {}".format(iov_num, oov_num, round((oov_num / (oov_num + iov_num)), 2)))
 
     return torch.from_numpy(embeddings).float()
 

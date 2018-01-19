@@ -91,7 +91,7 @@ def load_data(text_field, label_field, path_file, **kargs):
     print("len(dev_data) {} ".format(len(dev_data)))
     print("len(test_data) {} ".format(len(test_data)))
     # print("all word")
-    text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+    text_field.build_vocab(train_data.text, dev_data.text, test_data.text, min_freq=args.min_freq)
     label_field.build_vocab(train_data.label)
     train_iter, dev_iter, test_iter = create_Iterator(train_data, dev_data, test_data, batch_size=args.batch_size,
                                                       **kargs)
@@ -155,13 +155,14 @@ def main():
                                                 repeat=False, shuffle=args.epochs_shuffle, sort=False)
     args.embed_num = len(text_field.vocab)
     args.class_num = len(label_field.vocab) - 1
+    args.PaddingID = text_field.vocab.stoi[text_field.pad_token]
     print("embed_num : {}, class_num : {}".format(args.embed_num, args.class_num))
-
+    print("PaddingID {}".format(args.PaddingID))
     # pretrained word embedding
     if args.word_Embedding:
-        pretrain_embed = load_pretrained_emb_avg(path=args.word_Embedding_Path,
-                                                 text_field_words_dict=text_field.vocab.itos,
-                                                 pad=text_field.pad_token)
+        pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
+                                                   text_field_words_dict=text_field.vocab.itos,
+                                                   pad=text_field.pad_token)
         args.pretrained_weight = pretrain_embed
 
     # print params
@@ -172,6 +173,8 @@ def main():
         print("loading CNN model.....")
         # model = model_CNN.CNN_Text(args)
         model = model_SumPooling.SumPooling(args)
+        # for param in model.parameters():
+        #     param.requires_grad = False
         shutil.copy("./models/model_CNN.py", args.save_dir)
         print(model)
         if args.use_cuda is True:

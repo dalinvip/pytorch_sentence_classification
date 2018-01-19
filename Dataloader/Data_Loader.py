@@ -101,7 +101,7 @@ class Data(data.Dataset):
         if shuffle:
             print("shuffle data examples......")
             random.shuffle(examples_data)
-            random.shuffle(examples_data)
+            # random.shuffle(examples_data)
         if dev_ratio > 0:
             dev_index = -1 * int((0.1 + 0.2) * len(examples_data))
             test_index = -1 * int(0.2 * len(examples_data))

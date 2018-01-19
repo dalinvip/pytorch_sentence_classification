@@ -34,14 +34,21 @@ class SumPooling(nn.Module):
         V = args.embed_num
         D = args.embed_dim
         C = args.class_num
+        PaddingID = args.PaddingID
 
-        self.embed = nn.Embedding(V, D)
+        self.embed = nn.Embedding(V, D, padding_idx=PaddingID)
 
-        if args.word_Embedding:
-            self.embed.weight.data.copy_(args.pretrained_weight)
-            self.embed.weight.require_grads = False
+        # if args.word_Embedding:
+        #     self.embed.weight.data.copy_(args.pretrained_weight)
+        self.embed.weight.requires_grad = False
+
+        self.dropout_embed = nn.Dropout(args.dropout_embed)
+        self.dropout = nn.Dropout(args.dropout)
 
         self.linear = nn.Linear(in_features=D, out_features=C, bias=True)
+        init.xavier_uniform(self.linear.weight)
+        # self.linearLayer.bias.data.uniform_(-np.sqrt(6 / (hyperParams.hiddenSize + 1)),
+        #                                     np.sqrt(6 / (hyperParams.hiddenSize + 1)))
 
     def sum_pooling(self, embed):
         assert embed.dim() == 3
@@ -52,10 +59,12 @@ class SumPooling(nn.Module):
 
     def forward(self, x):
         x = self.embed(x)  # (N,W,D)
+        # x = Variable(x.data, requires_grad=False)
         x = x.permute(0, 2, 1)
         # print(x.size())
         x = self.sum_pooling(x)
-        logit = self.linear(x)
+        # x = self.dropout_embed(x)
+        logit = self.linear(F.tanh(x))
         return logit
 
 
