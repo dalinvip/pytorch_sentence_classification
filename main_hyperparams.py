@@ -85,14 +85,17 @@ args = parser.parse_args()
 assert args.test_interval == args.dev_interval
 
 
-def load_data(text_field, label_field, path_file, **kargs):
-    train_data, dev_data, test_data = Data.splits(path_file, text_field, label_field, shuffle=args.shuffle)
+def load_data(text_field, label_field, train_path, dev_path, test_path, **kargs):
+    train_data, dev_data, test_data = Data.splits(train_path, dev_path, test_path, text_field, label_field,
+                                                  shuffle=args.shuffle)
     print("len(train_data) {} ".format(len(train_data)))
     print("len(dev_data) {} ".format(len(dev_data)))
     print("len(test_data) {} ".format(len(test_data)))
     # print("all word")
     text_field.build_vocab(train_data.text, dev_data.text, test_data.text, min_freq=args.min_freq)
-    label_field.build_vocab(train_data.label)
+    label_field.build_vocab(train_data.label, dev_data.label, test_data.label)
+    # text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+    # label_field.build_vocab(train_data.label)
     train_iter, dev_iter, test_iter = create_Iterator(train_data, dev_data, test_data, batch_size=args.batch_size,
                                                       **kargs)
     return train_iter, dev_iter, test_iter
@@ -151,7 +154,10 @@ def main():
     # build vocab and iterator
     text_field = data.Field(lower=True)
     label_field = data.Field(sequential=False)
-    train_iter, dev_iter, test_iter = load_data(text_field, label_field, path_file=args.train_path, device=args.gpu_device,
+    train_iter, dev_iter, test_iter = load_data(text_field, label_field, train_path=args.train_path,
+                                                dev_path=args.dev_path,
+                                                test_path=args.test_path,
+                                                device=args.gpu_device,
                                                 repeat=False, shuffle=args.epochs_shuffle, sort=False)
     args.embed_num = len(text_field.vocab)
     args.class_num = len(label_field.vocab) - 1
@@ -163,6 +169,8 @@ def main():
         pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
                                                    text_field_words_dict=text_field.vocab.itos,
                                                    pad=text_field.pad_token)
+        calculate_oov(path=args.word_Embedding_Path, text_field_words_dict=text_field.vocab.itos,
+                      pad=text_field.pad_token)
         args.pretrained_weight = pretrain_embed
 
     # print params

@@ -82,7 +82,7 @@ class Data(data.Dataset):
         super(Data, self).__init__(examples, fields, **kwargs)
 
     @classmethod
-    def splits(cls, path_file, text_field, label_field, dev_ratio=.1, shuffle=True ,root='.', **kwargs):
+    def splits(cls, train_path, dev_path, test_path, text_field, label_field, shuffle=True, **kwargs):
         """Create dataset objects for splits of the MR dataset.
         Arguments:
             text_field: The field that will be used for the sentence.
@@ -96,16 +96,17 @@ class Data(data.Dataset):
             Remaining keyword arguments: Passed to the splits method of
                 Dataset.
         """
-        print("path_file {}".format(path_file))
-        examples_data = cls(text_field, label_field, path=path_file, **kwargs).examples
+        print("train_path {} \ndev_path {} \ntest_path {}".format(train_path, dev_path, test_path))
+        examples_train = cls(text_field, label_field, path=train_path, **kwargs).examples
+        examples_dev = cls(text_field, label_field, path=dev_path, **kwargs).examples
+        examples_test = cls(text_field, label_field, path=test_path, **kwargs).examples
+
         if shuffle:
             print("shuffle data examples......")
-            random.shuffle(examples_data)
-            # random.shuffle(examples_data)
-        if dev_ratio > 0:
-            dev_index = -1 * int((0.1 + 0.2) * len(examples_data))
-            test_index = -1 * int(0.2 * len(examples_data))
+            random.shuffle(examples_train)
+            random.shuffle(examples_dev)
+            random.shuffle(examples_test)
 
-        return (cls(text_field, label_field, examples=examples_data[:dev_index]),
-                cls(text_field, label_field, examples=examples_data[dev_index:test_index]),
-                cls(text_field, label_field, examples=examples_data[test_index:]))
+        return (cls(text_field, label_field, examples=examples_train),
+                cls(text_field, label_field, examples=examples_test),
+                cls(text_field, label_field, examples=examples_dev))

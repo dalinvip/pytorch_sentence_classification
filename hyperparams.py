@@ -21,10 +21,11 @@ class Hyperparams():
 
         # Data path
         # self.train_path = "./Data/MR/rt-polarity.all"
-        self.train_path = "./Data/CR/custrev.all"
+        # self.train_path = "./Data/CR/custrev.all"
         # self.train_path = "./Data/Subj/subj.all"
-        self.dev_path = None
-        self.test_path = None
+        self.train_path = "./Data/SST-1/stsa.binary.train"
+        self.dev_path = "./Data/SST-1/stsa.binary.dev"
+        self.test_path = "./Data/SST-1/stsa.binary.test"
         self.shuffle = True
         self.epochs_shuffle = True
         self.nfold = 10
@@ -63,7 +64,7 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        self.word_Embedding_Path = "./Pretrain_Embedding/parallel/sentence_classification/enwiki.emb.source_feat_CR.txt"
+        self.word_Embedding_Path = "./Pretrain_Embedding/context/sentence_classification/enwiki.emb.source_MR_OOV.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 

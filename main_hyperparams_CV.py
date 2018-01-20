@@ -93,8 +93,9 @@ def load_data(text_field, label_field, path_file, **kargs):
     print("len(train_data) {} ".format(len(train_data)))
     print("len(test_data) {} ".format(len(test_data)))
     # print("all word")
-    text_field.build_vocab(train_data.text, min_freq=args.min_freq)
-    label_field.build_vocab(train_data.label)
+    # text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+    text_field.build_vocab(train_data.text, test_data.text, min_freq=args.min_freq)
+    label_field.build_vocab(train_data.label, test_data.label)
     train_iter, test_iter = create_Iterator(train_data, test_data, batch_size=args.batch_size, **kargs)
     return train_iter, test_iter
 
