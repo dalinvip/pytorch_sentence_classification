@@ -58,6 +58,7 @@ class SumPooling(nn.Module):
 
     def forward(self, x):
         x = self.embed(x)  # (N,W,D)
+        # x = self.dropout_embed(x)
         # x = Variable(x.data, requires_grad=False)
         x = x.permute(0, 2, 1)
         # print(x.size())

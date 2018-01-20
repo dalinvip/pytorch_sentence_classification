@@ -140,9 +140,9 @@ def cal_result():
 
 
 def main():
-    if args.use_cuda is True:
+    # if args.use_cuda is True:
         # use deterministic algorithm for cnn
-        torch.backends.cudnn.deterministic = True 
+        # torch.backends.cudnn.deterministic = True
     args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
     # save file
     mulu = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

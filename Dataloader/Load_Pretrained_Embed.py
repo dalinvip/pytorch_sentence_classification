@@ -101,9 +101,6 @@ def calculate_oov(path, text_field_words_dict, pad=None, set_padding=False):
             word_list.append(values[0])
     f.close()
 
-
-    # print(word_list)
-
     for w in text_field_words_dict:
         # print(w)
         if w in word_list:
