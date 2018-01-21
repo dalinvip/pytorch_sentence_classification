@@ -21,13 +21,14 @@ class Hyperparams():
 
         # Data path
         # self.train_path = "./Data/MR/rt-polarity.all"
+        self.train_path = "./Data/MPQA/mpqa.all"
         # self.train_path = "./Data/CR/custrev.all"
-        # self.dev_path = None
-        # self.test_path = None
+        self.dev_path = None
+        self.test_path = None
         # self.train_path = "./Data/Subj/subj.all"
-        self.train_path = "./Data/SST1/stsa.binary.train"
-        self.dev_path = "./Data/SST1/stsa.binary.dev"
-        self.test_path = "./Data/SST1/stsa.binary.test"
+        # self.train_path = "./Data/SST1/stsa.binary.train"
+        # self.dev_path = "./Data/SST1/stsa.binary.dev"
+        # self.test_path = "./Data/SST1/stsa.binary.test"
         self.shuffle = True
         self.epochs_shuffle = True
         self.nfold = 10
