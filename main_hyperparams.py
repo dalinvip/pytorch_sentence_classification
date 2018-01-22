@@ -17,8 +17,11 @@ import datetime
 import torch
 import torchtext.data as data
 from Dataloader.Data_Loader import *
+from Dataloader.DataSST2_Loader import *
+from Dataloader.DataTREC_Loader import *
 from Dataloader.Load_Pretrained_Embed import *
 import train_ALL_CNN
+import train_CV
 from models import model_CNN
 from models import model_SumPooling
 import shutil
@@ -46,6 +49,11 @@ parser.add_argument('-test_path', type=str, default=hyperparams.test_path, help=
 # shuffle data
 parser.add_argument('-shuffle', action='store_true', default=hyperparams.shuffle, help='shuffle the data when load data' )
 parser.add_argument('-epochs_shuffle', action='store_true', default=hyperparams.epochs_shuffle, help='shuffle the data every epoch' )
+# Datasets
+parser.add_argument('-SST_1', action='store_true', default=hyperparams.SST_1, help='Dataset')
+parser.add_argument('-SST_2', action='store_true', default=hyperparams.SST_2, help='Dataset')
+parser.add_argument('-TREC', action='store_true', default=hyperparams.TREC, help='Dataset')
+parser.add_argument('-CV', action='store_true', default=hyperparams.CV, help='Dataset')
 # model params
 parser.add_argument("-CNN", action='store_true', default=hyperparams.CNN, help="CNN neural network model")
 parser.add_argument("-wide_conv", action='store_true', default=hyperparams.wide_conv, help="wide CNN neural network model")
@@ -83,9 +91,11 @@ parser.add_argument("-num_threads", type=int, default=hyperparams.num_threads, h
 args = parser.parse_args()
 
 assert args.test_interval == args.dev_interval
+assert args.CV is False, "CrossFold Dataset, Please Run main_hyperparams_CV.py"
 
 
-def load_data(text_field, label_field, train_path, dev_path, test_path, **kargs):
+# SST-1 Dataset
+def load_SST_1(text_field, label_field, train_path, dev_path, test_path, **kargs):
     train_data, dev_data, test_data = Data.splits(train_path, dev_path, test_path, text_field, label_field,
                                                   shuffle=args.shuffle)
     print("len(train_data) {} ".format(len(train_data)))
@@ -101,11 +111,49 @@ def load_data(text_field, label_field, train_path, dev_path, test_path, **kargs)
     return train_iter, dev_iter, test_iter
 
 
+# SST-2 Dataset
+def load_SST_2(text_field, label_field, train_path, dev_path, test_path, **kargs):
+    train_data, dev_data, test_data = DataSST2.splits(train_path, dev_path, test_path, text_field, label_field,
+                                                      shuffle=args.shuffle)
+    print("len(train_data) {} ".format(len(train_data)))
+    print("len(dev_data) {} ".format(len(dev_data)))
+    print("len(test_data) {} ".format(len(test_data)))
+    # print("all word")
+    text_field.build_vocab(train_data.text, dev_data.text, test_data.text, min_freq=args.min_freq)
+    label_field.build_vocab(train_data.label, dev_data.label, test_data.label)
+    # text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+    # label_field.build_vocab(train_data.label)
+    train_iter, dev_iter, test_iter = create_Iterator(train_data, dev_data, test_data, batch_size=args.batch_size,
+                                                      **kargs)
+    return train_iter, dev_iter, test_iter
+
+
+def load_TREC(text_field, label_field, train_path, test_path, **kargs):
+    train_data, test_data = DataTREC.splits(train_path, test_path, text_field, label_field,
+                                            shuffle=args.shuffle)
+    print("len(train_data) {} ".format(len(train_data)))
+    print("len(test_data) {} ".format(len(test_data)))
+    # print("all word")
+    # text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+    text_field.build_vocab(train_data.text, test_data.text, min_freq=args.min_freq)
+    label_field.build_vocab(train_data.label, test_data.label)
+    train_iter, test_iter = create_Iterator_2(train_data, test_data, batch_size=args.batch_size, **kargs)
+    return train_iter, test_iter
+
+
+# create Iterator
+def create_Iterator_2(train_data, test_data, batch_size, **kargs):
+    train_iter, test_iter = data.Iterator.splits((train_data, test_data),
+                                                 batch_sizes=(batch_size, len(test_data)), **kargs)
+    return train_iter, test_iter
+
+
 # create Iterator
 def create_Iterator(train_data, dev_data, test_data, batch_size, **kargs):
     train_iter, dev_iter, test_iter = data.Iterator.splits(
         (train_data, dev_data, test_data),
         batch_sizes=(batch_size, len(dev_data), len(test_data)), **kargs)
+    print("train_iter length {}".format(len(test_iter)))
     return train_iter, dev_iter, test_iter
 
 
@@ -154,11 +202,26 @@ def main():
     # build vocab and iterator
     text_field = data.Field(lower=True)
     label_field = data.Field(sequential=False)
-    train_iter, dev_iter, test_iter = load_data(text_field, label_field, train_path=args.train_path,
-                                                dev_path=args.dev_path,
-                                                test_path=args.test_path,
-                                                device=args.gpu_device,
-                                                repeat=False, shuffle=args.epochs_shuffle, sort=False)
+    if args.SST_1 is True:
+        print("loading sst-1 dataset......")
+        train_iter, dev_iter, test_iter = load_SST_1(text_field, label_field, train_path=args.train_path,
+                                                     dev_path=args.dev_path,
+                                                     test_path=args.test_path,
+                                                     device=args.gpu_device,
+                                                     repeat=False, shuffle=args.epochs_shuffle, sort=False)
+    if args.SST_2 is True:
+        print("loading sst-2 dataset......")
+        train_iter, dev_iter, test_iter = load_SST_2(text_field, label_field, train_path=args.train_path,
+                                                     dev_path=args.dev_path,
+                                                     test_path=args.test_path,
+                                                     device=args.gpu_device,
+                                                     repeat=False, shuffle=args.epochs_shuffle, sort=False)
+    if args.TREC is True:
+        print("loading TREC dataset......")
+        train_iter, test_iter = load_TREC(text_field, label_field, train_path=args.train_path,
+                                          test_path=args.test_path, device=args.gpu_device, repeat=False,
+                                          shuffle=args.epochs_shuffle, sort=False)
+
     args.embed_num = len(text_field.vocab)
     args.class_num = len(label_field.vocab) - 1
     args.PaddingID = text_field.vocab.stoi[text_field.pad_token]
@@ -191,7 +254,10 @@ def main():
         print("CNN training start......")
         if os.path.exists("./Test_Result.txt"):
             os.remove("./Test_Result.txt")
-        model_count = train_ALL_CNN.train(train_iter, dev_iter, test_iter, model, args)
+        if args.SST_1 is True or args.SST_2 is True:
+            model_count = train_ALL_CNN.train(train_iter, dev_iter, test_iter, model, args)
+        if args.TREC is True:
+            model_count = train_CV.train(train_iter, test_iter, model, args)
 
     # calculate the best result
     cal_result()

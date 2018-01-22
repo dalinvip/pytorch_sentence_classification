@@ -18,17 +18,30 @@ random.seed(seed_num)
 
 class Hyperparams():
     def __init__(self):
-
-        # Data path
-        # self.train_path = "./Data/MR/rt-polarity.all"
-        self.train_path = "./Data/MPQA/mpqa.all"
-        # self.train_path = "./Data/CR/custrev.all"
-        self.dev_path = None
-        self.test_path = None
-        # self.train_path = "./Data/Subj/subj.all"
+        # Datasets
+        # sst-1
+        self.SST_1 = False
         # self.train_path = "./Data/SST1/stsa.binary.train"
         # self.dev_path = "./Data/SST1/stsa.binary.dev"
         # self.test_path = "./Data/SST1/stsa.binary.test"
+        # sst-2
+        self.SST_2 = False
+        # self.train_path = "./Data/SST2/stsa.fine.train"
+        # self.dev_path = "./Data/SST2/stsa.fine.dev"
+        # self.test_path = "./Data/SST2/stsa.fine.test"
+        # TREC
+        self.TREC = True
+        self.train_path = "./Data/TREC/TREC.train.all"
+        self.dev_path = None
+        self.test_path = "./Data/TREC/TREC.test.all"
+        self.CV = False
+        # self.train_path = "./Data/MR/rt-polarity.all"
+        # self.train_path = "./Data/MPQA/mpqa.all"
+        # self.train_path = "./Data/CR/custrev.all"
+        # self.train_path = "./Data/Subj/subj.all"
+        # self.dev_path = None
+        # self.test_path = None
+
         self.shuffle = True
         self.epochs_shuffle = True
         self.nfold = 10
@@ -51,7 +64,7 @@ class Hyperparams():
         # L2 weight_decay
         self.weight_decay = 1e-8  # default value is zero in Adam SGD
         # self.weight_decay = 0   # default value is zero in Adam SGD
-        self.epochs = 200
+        self.epochs = 1000
         self.train_batch_size = 16
         self.dev_batch_size = None  # "None meaning not use batch for dev"
         self.test_batch_size = None  # "None meaning not use batch for test"
@@ -67,7 +80,7 @@ class Hyperparams():
 
         # word_Embedding
         self.word_Embedding = True
-        self.word_Embedding_Path = "./Pretrain_Embedding0120/context/sentence_classification/enwiki.emb.source_SST1_OOV.txt"
+        self.word_Embedding_Path = "./Pretrain_Embedding0120/context/sentence_classification/enwiki.emb.source_SST1.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/sentence_classification/enwiki.emb.source_CR.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 

@@ -86,6 +86,7 @@ parser.add_argument("-num_threads", type=int, default=hyperparams.num_threads, h
 args = parser.parse_args()
 
 assert args.test_interval == args.dev_interval
+assert args.CV is True, "Not CrossFold Dataset, Please Run main_hyperparams.py"
 
 
 def load_data(text_field, label_field, path_file, **kargs):
@@ -103,7 +104,7 @@ def load_data(text_field, label_field, path_file, **kargs):
 # create Iterator
 def create_Iterator(train_data, test_data, batch_size, **kargs):
     train_iter, test_iter = data.Iterator.splits((train_data, test_data),
-                                                batch_sizes=(batch_size, len(test_data)), **kargs)
+                                                 batch_sizes=(batch_size, len(test_data)), **kargs)
     return train_iter, test_iter
 
 
