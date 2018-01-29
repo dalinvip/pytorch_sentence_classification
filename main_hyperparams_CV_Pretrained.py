@@ -19,10 +19,12 @@ import torchtext.data as data
 from Dataloader.Data_Loader import *
 from Dataloader.Data_Loader_CV import *
 from Dataloader.Load_Pretrained_Embed import *
+from Dataloader.Data_Loader_Pretrained import *
 import train_ALL_CNN
 import train_CV
 from models import model_CNN
 from models import model_SumPooling
+from models import model_SumPooling_Pretrained
 import shutil
 import random
 import hyperparams as hy
@@ -93,12 +95,39 @@ def load_data(text_field, label_field, path_file, **kargs):
     train_data, test_data = DataCV.splits(path_file, text_field, label_field, shuffle=args.shuffle)
     print("len(train_data) {} ".format(len(train_data)))
     print("len(test_data) {} ".format(len(test_data)))
-    # print("all word")
-    # text_field.build_vocab(train_data.text, min_freq=args.min_freq)
+
     text_field.build_vocab(train_data.text, test_data.text, min_freq=args.min_freq)
     label_field.build_vocab(train_data.label, test_data.label)
     train_iter, test_iter = create_Iterator(train_data, test_data, batch_size=args.batch_size, **kargs)
     return train_iter, test_iter
+
+
+def build_Pretrained_vocab(pretrained_text_field, pretrained_label_field, path_file):
+    # print("build vocab from {}".format(path_file))
+    Pretrained_data = DataPretrained.splits(path_file, pretrained_text_field, pretrained_label_field, shuffle=args.shuffle)
+    pretrained_text_field.build_vocab(Pretrained_data.text, min_freq=args.min_freq)
+
+    # rewrite text_field vocab
+    print("rewrite text_field vocab from {}".format(path_file))
+    pretrained_text_field.vocab.itos.clear()
+    pretrained_text_field.vocab.stoi.clear()
+    id = 0
+    pretrained_text_field.vocab.itos.append("<unk>")
+    pretrained_text_field.vocab.itos.append("<pad>")
+    pretrained_text_field.vocab.stoi["<unk>"] = id
+    pretrained_text_field.vocab.stoi["<pad>"] = id + 1
+    with open(path_file, encoding="UTF-8") as f:
+        now_line = 1
+        for line in f:
+            now_line += 1
+            sys.stdout.write("\rhandling with the {} line".format(now_line))
+            line = line.split(" ")
+            pretrained_text_field.vocab.itos.append(line[0])
+            pretrained_text_field.vocab.stoi[line[0]] = now_line
+    f.close()
+    print("\nrewrite text_field vocab finished")
+    # print(pretrained_text_field.vocab.stoi)
+    # print(pretrained_text_field.vocab.itos)
 
 
 # create Iterator
@@ -203,41 +232,53 @@ def main():
     if not os.path.isdir(Temp_Test_Result):
         os.makedirs(Temp_Test_Result)
 
+    pretrained_text_field = data.Field(lower=False)
+    pretrained_label_field = data.Field(sequential=False)
+    build_Pretrained_vocab(pretrained_text_field, pretrained_label_field, path_file=args.word_Embedding_Path)
+    # print(text_field.vocab.stoi)
+    args.pretrained_text_field = pretrained_text_field
+    args.pretrained_label_field = pretrained_label_field
+    args.embed_num = len(pretrained_text_field.vocab)
+    embed, pretrained_embed_dim = model_SumPooling_Pretrained.load_pretrain(file=args.word_Embedding_Path, args=args)
+    args.embed = embed
+    args.pretrained_embed_dim = pretrained_embed_dim
     cv_result = []
     # CV loop start
     for id in range(args.nfold):
         print("\nthe {} CV file".format(id))
         # build vocab and iterator
-        text_field = data.Field(lower=True)
+        text_field = data.Field(lower=False)
         label_field = data.Field(sequential=False)
+
         cv_spilit_file(args.train_path, args.nfold, test_id=id)
         train_iter, test_iter = load_data(text_field, label_field, path_file=args.train_path, device=args.gpu_device,
                                           repeat=False, shuffle=args.epochs_shuffle, sort=False)
-        args.embed_num = len(text_field.vocab)
+
+        args.text_field = text_field
         args.class_num = len(label_field.vocab) - 1
-        args.PaddingID = text_field.vocab.stoi[text_field.pad_token]
+        args.PaddingID = pretrained_text_field.vocab.stoi[pretrained_text_field.pad_token]
         print("embed_num : {}, class_num : {}".format(args.embed_num, args.class_num))
         print("PaddingID {}".format(args.PaddingID))
         # pretrained word embedding
-        if args.word_Embedding:
-            pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
-                                                       text_field_words_dict=text_field.vocab.itos,
-                                                       pad=text_field.pad_token)
-            calculate_oov(path=args.word_Embedding_Path, text_field_words_dict=text_field.vocab.itos,
-                          pad=text_field.pad_token)
-            args.pretrained_weight = pretrain_embed
+        # if args.word_Embedding:
+        #     pretrain_embed = load_pretrained_emb_zeros(path=args.word_Embedding_Path,
+        #                                                text_field_words_dict=text_field.vocab.itos,
+        #                                                pad=text_field.pad_token)
+        #     calculate_oov(path=args.word_Embedding_Path, text_field_words_dict=text_field.vocab.itos,
+        #                   pad=text_field.pad_token)
+        #     args.pretrained_weight = pretrain_embed
 
         # print params
         show_params()
 
         # load model and start train
         if args.CNN is True:
-            print("loading CNN model.....")
+            print("loading SumPooling model.....")
             # model = model_CNN.CNN_Text(args)
-            model = model_SumPooling.SumPooling(args)
+            model = model_SumPooling_Pretrained.SumPooling(args)
             # for param in model.parameters():
             #     param.requires_grad = False
-            shutil.copy("./models/model_SumPooling.py", args.save_dir)
+            shutil.copy("./models/model_SumPooling_Pretrained.py", args.save_dir)
             print(model)
             if args.use_cuda is True:
                 print("using cuda......")

@@ -25,7 +25,7 @@ torch.manual_seed(hyperparams.seed_num)
 random.seed(hyperparams.seed_num)
 
 
-class DataCV(data.Dataset):
+class DataPretrained(data.Dataset):
 
     def __init__(self, text_field, label_field, path=None, file=None, examples=None, **kwargs):
         """
@@ -58,43 +58,26 @@ class DataCV(data.Dataset):
 
             return string.strip().lower()
 
-
-        def label_sentence(sentence, now_line):
-            sentence = sentence.split(" ")
-            labeled_sentence = []
-            for index, word in enumerate(sentence):
-                word = str(now_line) + "-" + str(index) + "#" + word
-                labeled_sentence.append(word)
-            # list convert to str
-            labeled_sentence = " ".join(labeled_sentence)
-            return labeled_sentence
-
-        text_field.preprocessing = data.Pipeline(clean_str)
+        # text_field.preprocessing = data.Pipeline(clean_str)
+        # fields = [('text', text_field), ('label', label_field)]
         fields = [('text', text_field), ('label', label_field)]
+        # fields = []
 
         if examples is None:
-            path = None if os.path.join("./", file) is None else os.path.join("./", file)
+            # path = None if os.path.join("./", file) is None else os.path.join("./", file)
             examples = []
-            with open(path, encoding="utf-8") as f:
-                a, b = 0, 0
-                now_line = 0
-                for line in f:
-                    # sentence, flag = line.strip().split(' ||| ')
-                    # print(line)
-                    now_line += 1
-                    sys.stdout.write("\rhandling with the {} line.".format(now_line))
-                    label, seq, sentence = line.partition(" ")
-                    # clear string in every sentence
-                    sentence = clean_str(sentence)
-                    # sentence = label_sentence(sentence, now_line)
-                    if label == '0':
-                        a += 1
-                        examples += [data.Example.fromlist([sentence, 'negative'], fields=fields)]
-                    elif label == '1':
-                        b += 1
-                        examples += [data.Example.fromlist([sentence, 'positive'], fields=fields)]
-                print("negative sentence a {}, positive sentence b {} ".format(a, b))
-        super(DataCV, self).__init__(examples, fields, **kwargs)
+            str_line = ""
+            # with open(path, encoding="utf-8") as f:
+            #     now_line = 0
+            #
+            #     for line in f:
+            #         now_line += 1
+            #         sys.stdout.write("\rhandling with the {} line.".format(now_line))
+            #         line = line.strip().split(" ")
+            #         str_line = str_line + line[0] + " "
+            examples += [data.Example.fromlist([str_line, 'pretrained'], fields=fields)]
+            print("\n")
+        super(DataPretrained, self).__init__(examples, fields, **kwargs)
 
 
     @classmethod
@@ -113,29 +96,9 @@ class DataCV(data.Dataset):
                 Dataset.
         """
         print(path)
-        train_file = "temp_train.txt"
-        test_file = "temp_test.txt"
-        sorted_train_file = "temp_sorted_train.txt"
-        sorted_test_file = "temp_sorted_test.txt"
-        sort_data(path=train_file, path_save=sorted_train_file)
-        sort_data(path=test_file, path_save=sorted_test_file)
+        examples_pretrained = cls(text_field, label_field, path=path, **kwargs).examples
+        if shuffle:
+            print("shuffle data examples......")
+            random.shuffle(examples_pretrained)
 
-        examples_train = cls(text_field, label_field, path=path, file=sorted_train_file, **kwargs).examples
-        examples_test = cls(text_field, label_field, path=path, file=test_file, **kwargs).examples
-        # if shuffle:
-        #     print("shuffle data examples......")
-        #     random.shuffle(examples_train)
-        #     random.shuffle(examples_test)
-
-        return (cls(text_field, label_field, examples=examples_train),
-                cls(text_field, label_field, examples=examples_test))
-
-
-def sort_data(path=None, path_save=None):
-    with open(path, encoding="utf-8") as f:
-        lines = f.readlines()
-        lines.sort(key=lambda x: len(x))
-        if os.path.exists(path_save):
-            os.remove(path_save)
-    file = open(path_save, mode="w", encoding="UTF-8")
-    file.writelines(lines)
+        return cls(text_field, label_field, examples=examples_pretrained)

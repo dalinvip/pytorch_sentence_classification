@@ -56,7 +56,17 @@ class Data(data.Dataset):
             string = re.sub(r"\?", " \? ", string)
             string = re.sub(r"\s{2,}", " ", string)
 
-            return string.strip()
+            return string.strip().lower()
+
+        def label_sentence(sentence, now_line):
+            sentence = sentence.split(" ")
+            labeled_sentence = []
+            for index, word in enumerate(sentence):
+                word = str(now_line) + "-" + str(index) + "#" + word
+                labeled_sentence.append(word)
+            # list convert to str
+            labeled_sentence = " ".join(labeled_sentence)
+            return labeled_sentence
 
         text_field.preprocessing = data.Pipeline(clean_str)
         fields = [('text', text_field), ('label', label_field)]
@@ -66,12 +76,16 @@ class Data(data.Dataset):
             examples = []
             with open(path, encoding="utf-8") as f:
                 a, b = 0, 0
+                now_line = 0
                 for line in f:
                     # sentence, flag = line.strip().split(' ||| ')
                     # print(line)
+                    now_line += 1
+                    sys.stdout.write("\rhandling with the {} line.".format(now_line))
                     label, seq, sentence = line.partition(" ")
                     # clear string in every sentence
                     sentence = clean_str(sentence)
+                    # sentence = label_sentence(sentence, now_line)
                     if label == '0':
                         a += 1
                         examples += [data.Example.fromlist([sentence, 'negative'], fields=fields)]
