@@ -120,7 +120,7 @@ class DataCV(data.Dataset):
         sort_data(path=train_file, path_save=sorted_train_file)
         sort_data(path=test_file, path_save=sorted_test_file)
 
-        examples_train = cls(text_field, label_field, path=path, file=sorted_train_file, **kwargs).examples
+        examples_train = cls(text_field, label_field, path=path, file=train_file, **kwargs).examples
         examples_test = cls(text_field, label_field, path=path, file=test_file, **kwargs).examples
         # if shuffle:
         #     print("shuffle data examples......")
@@ -134,8 +134,9 @@ class DataCV(data.Dataset):
 def sort_data(path=None, path_save=None):
     with open(path, encoding="utf-8") as f:
         lines = f.readlines()
-        lines.sort(key=lambda x: len(x))
+        lines.sort(key=lambda x: len(x), reverse=False)
         if os.path.exists(path_save):
             os.remove(path_save)
     file = open(path_save, mode="w", encoding="UTF-8")
     file.writelines(lines)
+    file.close()

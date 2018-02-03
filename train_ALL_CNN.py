@@ -78,11 +78,11 @@ def train(train_iter, dev_iter, test_iter, model, args):
                     os.makedirs(args.save_dir)
                 save_prefix = os.path.join(args.save_dir, 'snapshot')
                 save_path = '{}_steps{}.pt'.format(save_prefix, steps)
-                torch.save(model, save_path)
+                # torch.save(model, save_path)
                 print(save_path, end=" ")
-                test_model = torch.load(save_path)
+                # test_model = torch.load(save_path)
                 # model_count += 1
-                test_eval(test_iter, test_model, save_path, args, model_count, max_dev_acc)
+                test_eval(test_iter, model, save_path, args, model_count, max_dev_acc)
     return model_count
 
 

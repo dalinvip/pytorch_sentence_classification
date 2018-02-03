@@ -58,16 +58,6 @@ class Data(data.Dataset):
 
             return string.strip().lower()
 
-        def label_sentence(sentence, now_line):
-            sentence = sentence.split(" ")
-            labeled_sentence = []
-            for index, word in enumerate(sentence):
-                word = str(now_line) + "-" + str(index) + "#" + word
-                labeled_sentence.append(word)
-            # list convert to str
-            labeled_sentence = " ".join(labeled_sentence)
-            return labeled_sentence
-
         text_field.preprocessing = data.Pipeline(clean_str)
         fields = [('text', text_field), ('label', label_field)]
 
@@ -85,7 +75,6 @@ class Data(data.Dataset):
                     label, seq, sentence = line.partition(" ")
                     # clear string in every sentence
                     sentence = clean_str(sentence)
-                    # sentence = label_sentence(sentence, now_line)
                     if label == '0':
                         a += 1
                         examples += [data.Example.fromlist([sentence, 'negative'], fields=fields)]
@@ -122,5 +111,5 @@ class Data(data.Dataset):
             random.shuffle(examples_test)
 
         return (cls(text_field, label_field, examples=examples_train),
-                cls(text_field, label_field, examples=examples_test),
-                cls(text_field, label_field, examples=examples_dev))
+                cls(text_field, label_field, examples=examples_dev),
+                cls(text_field, label_field, examples=examples_test))

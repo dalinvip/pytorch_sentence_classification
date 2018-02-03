@@ -56,7 +56,7 @@ class DataTREC(data.Dataset):
             string = re.sub(r"\?", " \? ", string)
             string = re.sub(r"\s{2,}", " ", string)
 
-            return string.strip()
+            return string.strip().lower()
 
         text_field.preprocessing = data.Pipeline(clean_str)
         fields = [('text', text_field), ('label', label_field)]
@@ -122,3 +122,4 @@ class DataTREC(data.Dataset):
 
         return (cls(text_field, label_field, examples=examples_train),
                 cls(text_field, label_field, examples=examples_test))
+

@@ -27,6 +27,7 @@ torch.manual_seed(hyperparams.seed_num)
 random.seed(hyperparams.seed_num)
 pad = "<pad>"
 unk = "<unk>"
+judge_flag = "##$$"
 
 
 class SumPooling(nn.Module):
@@ -65,10 +66,6 @@ class SumPooling(nn.Module):
         # print("n-gram")
         feat_embedding = 0
         feat_count = 0
-        # if word == unk or word == pad:
-        #     featID = feat_embedding_dict[word]
-        #     list_float = self.embed.weight.data[featID]
-        #     return list_float, 1
         word = "<" + word + ">"
         feat_embedding_list = []
         # print(word)
@@ -90,13 +87,17 @@ class SumPooling(nn.Module):
 
     def handle_word_context(self, sentence=None, word=None, windows_size=5):
         data_dict = {}
-        index = sentence.index(word)
+        index = (len(sentence) // 2)
         left = sentence[:index]
         right = sentence[(index + 1):]
         context_dict = {}
         for i in range(len(left)):
+            if left[i] == judge_flag:
+                continue
             context_dict["F-" + str(len(left) - i) + "@" + left[i]] = 0
         for i in range(len(right)):
+            if right[i] == judge_flag:
+                continue
             context_dict["F" + str(i + 1) + "@" + right[i]] = 0
         data_dict[word] = set(context_dict)
         return data_dict
@@ -138,20 +139,32 @@ class SumPooling(nn.Module):
             sentence_set = set(sentence)
             if pad in sentence_set:
                 sentence = sentence[:sentence.index(pad)]
-            # print(sentence)
+
             # context_dict = self.handle_word_context(sentence=sentence, windows_size=5)
             for id_word in range(x.size(1)):
                 word = itos[x.data[id_batch][id_word]]
                 if word != pad:
-                    start = id_word - windows_size if id_word > windows_size else 0
-                    context_dict = self.handle_word_context(sentence=sentence[start:(id_word + windows_size + 1)],
-                                                            word=word, windows_size=windows_size)
+                    start = id_word
+                    sentence_paded = []
+                    for i in range((start - windows_size), (start + windows_size + 1)):
+                        if i >= len(sentence):
+                            break
+                        if i < 0:
+                            sentence_paded.append(judge_flag)
+                            continue
+                        else:
+                            sentence_paded.extend([sentence[i]])
+                    sentence_paded_len = (2 * windows_size + 1 - len(sentence_paded))
+                    if sentence_paded_len > 0:
+                        sentence_paded.extend([judge_flag] * sentence_paded_len)
+                    context_dict = self.handle_word_context(sentence=sentence_paded, word=word, windows_size=windows_size)
+
                     feat_sum_embedding, feat_ngram_num = self.word_n_gram(word=word, feat_embedding_dict=stoi)
                     if not isinstance(feat_sum_embedding, np.ndarray):
                         # if the word no n-gram in feature, replace with zero
                         feat_sum_embedding = np.array(list([0] * self.pretrained_embed_dim))
                         feat_ngram_num = 1
-                    print(context_dict)
+                    # print(context_dict)
                     context_embed, context_num = self.context(context_dict=context_dict[word], stoi=stoi)
                     feat_embed = np.divide(np.add(feat_sum_embedding, context_embed), np.add(feat_ngram_num, context_num))
                     # print(feat_embed)
