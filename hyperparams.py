@@ -79,11 +79,11 @@ class Hyperparams():
         self.min_freq = 1
 
         # word_Embedding
-        self.word_Embedding = False
-        self.word_Embedding_Path = "./Pretrain_Embedding/richfeat.enwiki.emb.feature.small"
+        self.word_Embedding = True
+        # self.word_Embedding_Path = "./Pretrain_Embedding/richfeat.enwiki.emb.feature.small"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file0120/file/file0120/richfeat/enwiki.emb.feature"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file0120/sentence_classification_richfeat/enwiki.emb.source_feat_SST1.txt"
-        # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file0120/file/context/sentence_classification/enwiki.emb.source_SST1.txt"
+        self.word_Embedding_Path = "/home/lzl/mszhang/suda_file0120/file/richfeat/sentence_classification/enwiki.emb.source_feat_word_ngram_SST1.txt"
         # self.word_Embedding_Path = "/home/lzl/mszhang/suda_file_0113/file/context/enwiki.emb.source_CR.txt"
 
         # GPU
